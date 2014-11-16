@@ -1,0 +1,198 @@
+<html>
+<head>
+<title>Daily graphs of page views/loads metric</title>
+<script src=".../jquery-1.11.1.min.js"></script>
+<script src=".../Highcharts/js/highcharts.js"></script>
+<script src="../Highcharts/js/modules/exporting.js"></script>
+</head>
+
+<body>
+
+<script>
+function plotGraph() { //drawing graph with data from file "Visitors views ratio.txt"
+
+//points - Y-axis data, daysWeek - X-axis data
+var points = [];
+var daysWeek = [];
+
+//Extracting data from text file to array vals
+var vals = new Array();
+$.ajax({
+    url: "Visitors views ratio.txt",
+    type: 'get',
+    cache: false,
+    async: false,
+    success: function(data) {
+      vals = data.split('\n');
+    }
+});
+
+$.points = [];
+$.daysWeek = [];
+
+//Filling arrays points and daysWeek with data from array "vals"
+//You can check if everything's correct using console.log function
+for (var i=0; i<vals.length-1; i++) {
+  switch (i%2) {
+    case 0:
+      points.push(parseFloat(vals[i]));
+      //console.log(points);
+      break;
+    case 1:
+      daysWeek.push(vals[i]);
+      break;
+  }
+}
+
+//Parameters for graph
+$(function () {
+    $('#container').highcharts({
+        //chart: {
+        //    type: 'area'
+        //},
+        credits: {
+                enabled: false
+            },
+        title: {
+            text: 'Page views per visitor'
+        },
+        subtitle: {
+            text: 'AT Internet data'
+        },
+        xAxis: {
+            categories: daysWeek,
+            tickmarkPlacement: 'on',
+            title: {
+                enabled: false
+            }
+        },
+        yAxis: {
+            title: {
+                text: 'Page views per visitor'
+            },
+            labels: {
+                formatter: function () {
+                    return this.value;
+                }
+            }
+        },
+        tooltip: {
+            pointFormat: '<span style="color:{series.color}">\u25CF</span> {series.name}: <b>{point.y}</b><br/>',
+            shared: true,
+            valueSuffix: ' units'
+        },
+        plotOptions: {
+            area: {
+                stacking: 'normal',
+                lineColor: '#444444',
+                lineWidth: 1,
+                marker: {
+                    lineWidth: 1,
+                    lineColor: '#444444'
+                }
+            }
+        },
+        series: [{
+            name: 'Last week',
+            data: points
+        }]
+    });
+});
+}
+</script>
+
+<script>
+//Highcharts theme parameters
+Highcharts.theme = {
+   colors: ["#f45b5b", "#8085e9", "#e0e0e0", "#7798BF", "#aaeeee", "#ff0066", "#eeaaee",
+      "#55BF3B", "#DF5353", "#7798BF", "#aaeeee"],
+   chart: {
+      backgroundColor: null,
+      style: {
+         fontFamily: "Signika, serif"
+      }
+   },
+   title: {
+      style: {
+         color: 'black',
+         fontSize: '18px',
+         fontWeight: 'bold'
+      }
+   },
+   subtitle: {
+      style: {
+         color: 'black'
+      }
+   },
+   tooltip: {
+      borderWidth: 0
+   },
+   legend: {
+      itemStyle: {
+         fontWeight: 'bold',
+         fontSize: '13px'
+      }
+   },
+   xAxis: {
+      labels: {
+         style: {
+            color: '#6e6e70',
+            fontSize: '13px'
+         }
+      }
+   },
+   yAxis: {
+      labels: {
+         style: {
+            color: '#6e6e70',
+            fontSize: '13px'         }
+      }
+   },
+   plotOptions: {
+      series: {
+         shadow: true
+      },
+      candlestick: {
+         lineColor: '#404048'
+      },
+      map: {
+         shadow: false
+      }
+   },
+
+   // Highstock specific
+   navigator: {
+      xAxis: {
+         gridLineColor: '#D0D0D8'
+      }
+   },
+   rangeSelector: {
+      buttonTheme: {
+         fill: 'white',
+         stroke: '#C0C0C8',
+         'stroke-width': 1,
+         states: {
+            select: {
+               fill: '#D0D0D8'
+            }
+         }
+      }
+   },
+   scrollbar: {
+      trackBorderColor: '#C0C0C8'
+   },
+
+   // General
+   background2: '#E0E0E8'
+   
+};
+
+Highcharts.setOptions(Highcharts.theme);
+</script>
+
+<h2>Page view per visitor daily ratio</h2>
+
+<script>plotGraph()</script>
+<div id="container" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
+</body>
+</html>
